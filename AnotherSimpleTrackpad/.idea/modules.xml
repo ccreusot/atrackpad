@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AnotherSimpleTrackpad.iml" filepath="$PROJECT_DIR$/AnotherSimpleTrackpad.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AnotherSimpleTrackpad/AnotherSimpleTrackpad-AnotherSimpleTrackpad.iml" filepath="$PROJECT_DIR$/AnotherSimpleTrackpad/AnotherSimpleTrackpad-AnotherSimpleTrackpad.iml" />
+    </modules>
+  </component>
+</project>
+

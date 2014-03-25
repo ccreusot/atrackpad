@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <EditText android:id="@+id/connection_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Connection Name"/>
+    <EditText android:id="@+id/connection_ip"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="Address IP"/>
+    <EditText android:id="@+id/connection_port"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:numeric="integer"
+              android:hint="Address Port"/>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+        <Button android:id="@+id/cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Cancel"/>
+        <Button android:id="@+id/neutral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Remove"
+                />
+        <Button android:id="@+id/validate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Save"/>
+    </LinearLayout>
+</LinearLayout>
