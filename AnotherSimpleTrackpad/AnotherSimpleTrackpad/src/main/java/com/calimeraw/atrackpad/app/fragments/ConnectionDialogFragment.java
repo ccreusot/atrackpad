@@ -54,7 +54,9 @@ public class ConnectionDialogFragment extends DialogFragment {
                 if (name.getText() != null && ip.getText() != null && port.getText() != null) {
                     ConnectionsDB db = new ConnectionsDB(getActivity());
                     if (mConnection != null && mAction.equals(Action.Edit)) {
-                        db.updateConnection(new Connection(name.getText().toString(),
+                        db.updateConnection(new Connection(
+                                mConnection.id,
+                                name.getText().toString(),
                                 ip.getText().toString(),
                                 Integer.parseInt(port.getText().toString())), mConnection);
                     } else {

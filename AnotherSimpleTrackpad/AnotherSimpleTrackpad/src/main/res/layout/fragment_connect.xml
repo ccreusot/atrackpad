@@ -10,7 +10,7 @@
     tools:context="com.calimeraw.atrackpad.app.ATrackpad$PlaceholderFragment">
 
     <TextView
-        android:text="Select a connection"
+        android:text="@string/select_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <LinearLayout
@@ -29,16 +29,16 @@
             <Button android:id="@+id/add_connection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add"/>
+                    android:text="@string/button_add"/>
             <Button android:id="@+id/edit_connection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Edit"/>
+                    android:text="@string/button_edit"/>
         </LinearLayout>
     </LinearLayout>
     <Button android:id="@+id/connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connect"/>
+            android:text="@string/button_connect"/>
 
 </LinearLayout>

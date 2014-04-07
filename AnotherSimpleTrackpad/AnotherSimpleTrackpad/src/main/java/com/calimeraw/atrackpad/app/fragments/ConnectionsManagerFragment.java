@@ -22,7 +22,7 @@ import java.util.List;
  * desc: Small fragment will be used to select/connect or edit, add any connection profile
  */
 public class ConnectionsManagerFragment  extends Fragment implements ConnectionDialogFragment.DialogListener {
-
+    // TODO : There is a bug here, you need to update the mConnection after adding it.
     private static final String LOG = ConnectionsManagerFragment.class.getName();
 
     private Spinner mProfiles;
@@ -108,6 +108,8 @@ public class ConnectionsManagerFragment  extends Fragment implements ConnectionD
     public void onValidate() {
         ((SpinnerConnectionAdapter)mProfiles.getAdapter()).setConnectionList(getConnections());
         ((SpinnerConnectionAdapter)mProfiles.getAdapter()).notifyDataSetChanged();
+        mConnection = (Connection)mProfiles.getAdapter().getItem(0);
+        mProfiles.setSelection(0);
     }
 
     @Override

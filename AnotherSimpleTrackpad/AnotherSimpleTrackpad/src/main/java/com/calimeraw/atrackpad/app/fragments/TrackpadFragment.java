@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.*;
 import com.calimeraw.atrackpad.app.R;
 import com.calimeraw.atrackpad.app.models.Connection;
+import com.calimeraw.atrackpad.app.networks.NetworkTrackpadClient;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
 
     private GestureDetectorCompat mGesture;
     private Connection mConnection;
-    private RunningConnection runningConnection;
+    private NetworkTrackpadClient runningConnection;
 
     public static TrackpadFragment newInstance(Connection connection) {
         TrackpadFragment frag = new TrackpadFragment();
@@ -51,7 +52,7 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
     @Override
     public void onStart() {
         super.onStart();
-        runningConnection = new RunningConnection(mConnection);
+        runningConnection = new NetworkTrackpadClient(mConnection);
         runningConnection.start();
     }
 
@@ -133,90 +134,4 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
         //Log.d(LOG, "x: " + (e2.getX() - e1.getX()) + " y: " + (e2.getY() - e1.getY()));
         return false;
     }
-
-    public static class RunningConnection extends Thread {
-        private static final String LOG = RunningConnection.class.getName();
-        private Socket mSocket;
-        private Connection mConnection;
-        private Queue<Bundle> mMessageQueue;
-        private boolean mRunning;
-        private DataOutputStream mOos;
-
-        public RunningConnection(Connection connection) {
-            mConnection = connection;
-            mMessageQueue = new ConcurrentLinkedQueue<Bundle>();
-        }
-
-        @Override
-        public void run() {
-            mRunning = true;
-            try {
-                mSocket = new Socket(mConnection.ip, mConnection.port);
-                mOos = new DataOutputStream(mSocket.getOutputStream());
-                while (mRunning) {
-                    while (!mMessageQueue.isEmpty()) {
-                        Bundle toSend = mMessageQueue.poll();
-                        int cmd = toSend.getInt("cmd");
-                        switch (cmd) {
-                            case 1:
-                                mOos.writeInt(16);
-                                mOos.writeInt(cmd);
-                                mOos.writeFloat(toSend.getFloat("x"));
-                                mOos.writeFloat(toSend.getFloat("y"));
-                                break;
-                            case 2:
-                                mOos.writeInt(12);
-                                mOos.writeInt(cmd);
-                                mOos.writeInt(toSend.getInt("button"));
-                                break;
-                            case 3:
-                                mOos.writeInt(16);
-                                mOos.writeInt(cmd);
-                                mOos.writeFloat(toSend.getFloat("x"));
-                                mOos.writeFloat(toSend.getFloat("y"));
-                                break;
-                        }
-                        mOos.flush();
-                    }
-                }
-                mSocket.close();
-            } catch (IOException e) {
-                Log.e(LOG, e.getMessage(), e);
-            } finally {
-                mRunning = false;
-                Log.d(LOG, "stopping connection");
-            }
-        }
-
-        public void toSendMove(float x, float y) {
-            if (!mRunning) return;
-            Bundle bundle = new Bundle();
-            bundle.putInt("cmd", 1);
-            bundle.putFloat("x", x);
-            bundle.putFloat("y", y);
-            mMessageQueue.offer(bundle);
-        }
-
-        public void toSendClick(int button) {
-            if (!mRunning) return;
-            Bundle bundle = new Bundle();
-            bundle.putInt("cmd", 2);
-            bundle.putInt("button", button);
-            mMessageQueue.offer(bundle);
-        }
-
-        public void toSendScroll(float x, float y) {
-            if (!mRunning) return;
-            Bundle bundle = new Bundle();
-            bundle.putInt("cmd", 3);
-            bundle.putFloat("x", x);
-            bundle.putFloat("y", y);
-            mMessageQueue.offer(bundle);
-        }
-
-        public void end() {
-            mRunning = false;
-        }
-    }
-
 }
