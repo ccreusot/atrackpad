@@ -21,9 +21,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * class TrackpadFragment
  * desc: Fragment that will be used to send information to the server.
  */
-public class TrackpadFragment extends Fragment implements GestureDetector.OnGestureListener, View.OnTouchListener {
+public class TrackpadFragment extends Fragment implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
     private static final String  LOG = TrackpadFragment.class.getName();
+    private static final int MOUSE_BUTTON_LEFT = 1;
+    private static final int MOUSE_BUTTON_RIGHT = 2;
 
     private GestureDetectorCompat mGesture;
     private Connection mConnection;
@@ -68,8 +70,10 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
         runningConnection.end();
     }
 
+    // Part wich correspond to the gesture management.
     private long mTimePress;
     private boolean mMultipleTouch;
+    private boolean mRightClick = false;// Small temp variable to do no do a simple click left after a right click
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -82,8 +86,9 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
                 case MotionEventCompat.ACTION_POINTER_UP:
                     if (event.getEventTime() - mTimePress > ViewConfiguration.getTapTimeout() - 200) {
                         Log.d(LOG, "click left");
-                        runningConnection.toSendClick(2);
+                        runningConnection.sendClick(MOUSE_BUTTON_RIGHT, 1);
                         mTimePress = 0;
+                        mRightClick = true;
                     }
                     break;
                 default:
@@ -93,7 +98,10 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
             }
         }
         else {
-            mGesture.onTouchEvent(event);
+            if (!mRightClick)
+                mGesture.onTouchEvent(event);
+            else
+                mRightClick = false;
         }
         return true;
     }
@@ -109,18 +117,34 @@ public class TrackpadFragment extends Fragment implements GestureDetector.OnGest
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
         Log.d(LOG, "click!");
-        runningConnection.toSendClick(1);
+        runningConnection.sendClick(MOUSE_BUTTON_LEFT, 1);
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        Log.d(LOG, "double click!");
+        runningConnection.sendClick(MOUSE_BUTTON_LEFT, 2);
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
         return false;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        Log.d(LOG, "x: " + (distanceX) + " y: " + (distanceY));
         if (mMultipleTouch)
-            runningConnection.toSendScroll(distanceX, distanceY);
+            runningConnection.sendScroll(distanceX, distanceY);
         else
-            runningConnection.toSendMove(distanceX, distanceY);
+            runningConnection.sendMove(distanceX, distanceY);
         return false;
     }
 
